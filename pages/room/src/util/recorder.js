@@ -1,13 +1,14 @@
 class Recorder {
     constructor(userName, stream) {
-        this.username = userName
+        this.userName = userName
         this.stream = stream
 
         this.filename = `id:${userName}-when:${Date.now()}`
         this.videoType = 'video/webm'
 
-        this.MediaRecorder = {}
+        this.mediaRecorder = {}
         this.recordedBlobs = []
+        this.completeRecordings = []
         this.recordingActive = false
     }
     _setup() {
@@ -21,16 +22,16 @@ class Recorder {
             .map(codec => ({ mimeType: `${this.videoType};${codec}`}))
             .find(options => MediaRecorder.isTypeSupported(options.mimeType))
         
-            if(!options) {
-                throw new Error(`none of the codecs: ${commonCodecs.join(',')} are supported`)
-            }
+        if(!options) {
+            throw new Error(`none of the codecs: ${commonCodecs.join(',')} are supported`)
+        }
 
         return options
     }
 
     startRecording() {
         const options = this._setup()
-        // se nao tiver mais video, ele ignora
+        // se nao estiver recebendo mais video, já ignora!
         if(!this.stream.active) return;
         this.mediaRecorder = new MediaRecorder(this.stream, options)
         console.log(`Created MediaRecorder ${this.mediaRecorder} with options ${options}`)
@@ -40,7 +41,7 @@ class Recorder {
         }
 
         this.mediaRecorder.ondataavailable = (event) => {
-            if(!event.data || !event.data.size) return;
+            if(!event.data || !event.data.size) return; 
 
             this.recordedBlobs.push(event.data)
         }
@@ -48,5 +49,19 @@ class Recorder {
         this.mediaRecorder.start()
         console.log(`Media Recorded started`, this.mediaRecorder)
         this.recordingActive = true
+
+    }
+
+    async stopRecording() {
+        if(!this.recordingActive) return;
+        if(this.mediaRecorder.state === "inactive") return;
+
+        console.log('`media recorded stopped!', this.userName)
+        this.mediaRecorder.stop()
+        
+        this.recordingActive = false 
+        await Util.sleep(200)
+        this.completeRecordings.push([...this.recordedBlobs])
+        this.recordedBlobs = []
     }
 }

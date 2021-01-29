@@ -19,8 +19,8 @@ class Business {
         return instance._init()
     }
     async _init() {
-
         this.view.configureRecordButton(this.onRecordPressed.bind(this))
+
 
         this.currentStream = await this.media.getCamera()
         this.socket = this.socketBuilder
@@ -114,12 +114,37 @@ class Business {
 
     onPeerCallClose () {
         return (call) => {
-            console.log('call closed!', call.peer)
+            console.log('call closed!!', call.peer)
         }
     }
 
-    onRecordPressed (recordingEnabled) {
+    onRecordPressed(recordingEnabled) {
         this.recordingEnabled = recordingEnabled
-        console.log('pressionou!')
+        console.log('pressionou!!', recordingEnabled)
+        for( const [key, value] of this.usersRecordings) {
+            if(this.recordingEnabled) {
+                value.startRecording()
+                continue;
+            }
+            this.stopRecording(key)
+        }
+        
+    }
+
+    // se um usuario entrar e sair da call durante uma gravançao
+    // precisamos parar as gravacoes anteriores dele
+    async stopRecording(userId) {
+        const usersRecordings = this.usersRecordings
+        for( const [ key, value] of usersRecordings) {
+            const isContextUser = key.includes(userId)
+            if(!isContextUser) continue;
+
+            const rec = value 
+            const isRecordingActive = rec.recordingActive 
+            if(!isRecordingActive)  continue;
+
+            await rec.stopRecording()
+
+        }
     }
 }
