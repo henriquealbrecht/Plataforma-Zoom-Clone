@@ -72,8 +72,9 @@ class Business {
             }
 
             this.view.setParticipants(this.peers.size)
-            this.view.removeVideoElement(userId)
             this.stopRecording(userId)
+
+            this.view.removeVideoElement(userId)
         }
     }
 
@@ -99,7 +100,7 @@ class Business {
     onPeerStreamReceived () {
         return (call, stream ) => {
             const callerId = call.peer 
-            if(this.peers.has(callerId)){
+            if(this.peers.has(callerId)) {
                 console.log('calling twice, ignoring second call...', callerId)
                 return;
             }
@@ -113,6 +114,12 @@ class Business {
 
     onPeerCallError () {
         return (call, error) => {
+            if(this.peers.has(userId)) {
+                this.peers.get(userId).call.close()
+                this.peers.delete(userId)
+            }
+            this.view.setParticipants(this.peers.size)
+
             console.log('an call error ocurred!', error)
             this.view.removeVideoElement(call.peer)
         }
@@ -164,6 +171,5 @@ class Business {
 
     onLeavePressed() {
         this.usersRecordings.forEach((value, key) => value.download())
-
     }
 }
