@@ -8,7 +8,7 @@
   <a href="#camera-imagens">Imagens</a>&nbsp;
 </h3>
 
-## : Sobre
+## :book: Sobre
 É uma cópia do aplicativo zoom, utilizado para chamadas de vídeo através de multiplos usuários.
 
 ## :computer: Tecnologias
@@ -16,7 +16,7 @@
 - Javascript;
 - Node;
 
-## Funcionalidades
+## :pen: Funcionalidades
 1. Criar sala de reunião padrão Zoom;  
 2. Compartilhar áudio e imagem;
 4. Gravação da reunião;
@@ -28,7 +28,7 @@
 ![room](https://github.com/henriquealbrecht/Plataforma-Zoom-Clone/raw/master/prints/room.png)
 
 
-### Pré-requisitos
+### :warning: Pré-requisitos
   - É necessario possuir o Node.js instalado;
   - É preciso ter um gerenciador de pacotes instalado, utilizei o NPM;
   - É preciso ter um editor de texto, utilizei o Visual Studio Code. 
